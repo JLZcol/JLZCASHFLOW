@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aeterna & JLZ - Cashflow Manager</title>
+    <!-- Tailwind CSS para diseño profesional -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased pb-12">
+
+    <!-- Header Principal -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-vault"></i> JLZ & Aeterna Cashflow
+                </h1>
+                <p class="text-xs text-slate-400">Sistema Dinámico de Distribución y Control</p>
+            </div>
+            <div id="connection-status" class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Configurando...
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
+
+        <!-- Panel de Ingreso de Monetización -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-coins text-emerald-400"></i> Registrar Nueva Monetización
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Monto Ingresado (COP)</label>
+                    <input type="number" id="input-monto" placeholder="Ej. 1500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Fuente / Detalle</label>
+                    <input type="text" id="input-fuente" value="Webcam / Retiro Semanal" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="registrarMonetizacion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Selector de Módulos (Tabs) -->
+        <div class="flex border-b border-slate-800 gap-2 overflow-x-auto pb-1">
+            <button onclick="cambiarTab('COMUN')" id="btn-comun" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer">
+                <i class="fa-solid fa-house-chimney mr-1.5"></i> Gastos Comunes
+            </button>
+            <button onclick="cambiarTab('JULIAN')" id="btn-julian" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-user mr-1.5"></i> Julián
+            </button>
+            <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                <i class="fa-solid fa-gem mr-1.5"></i> Madeleine (Aeterna)
+            </button>
+        </div>
+
+        <!-- Contenedor de Listas de Presupuesto -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="titulo-seccion" class="text-md font-bold text-white uppercase tracking-wider">Presupuesto Común</h3>
+                <span id="total-seccion" class="text-xs bg-slate-800 text-emerald-400 px-3 py-1 rounded-full font-mono font-bold">Total: $0</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase">
+                            <th class="py-3 px-3">Concepto</th>
+                            <th class="py-3 px-3">Monto Estimado</th>
+                            <th class="py-3 px-3">Día Límite</th>
+                            <th class="py-3 px-3">Prioridad</th>
+                            <th class="py-3 px-3 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-presupuesto-body" class="divide-y divide-slate-800/60 text-sm">
+                        <!-- Se llena dinámicamente con JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+   
+    <!-- Script de Conexión y Lógica Robusta -->
+    <script>
+        // Credenciales oficiales de tu Supabase
+        const SUPABASE_URL = 'https://fxtlvpxmgpvlrzjbcmoz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_5p_jxfzxzQa0S5C4sE_3UQ_OKIBW...'; // Asegúrate de poner tu llave publishable completa aquí
+        
+        let supabaseClient = null;
+        let tabActual = 'COMUN';
+        let datosPresupuesto = [];
+
+        // Inicializar Supabase al cargar la ventana
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Prueba rápida de lectura para validar conexión real
+                const { data, error } = await supabaseClient.from('presupuestos').select('id').limit(1);
+                
+                if (error) throw error;
+
+                document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado';
+                document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
+                
+                // Cargar los registros reales
+                await cargarPresupuestos();
+            } catch (e) {
+                console.error('Error de conexión con Supabase:', e);
+                document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span> Error de Conexión';
+                document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
+            }
+        });
+
+        async function cargarPresupuestos() {
+            if (!supabaseClient) return;
+            const { data, error } = await supabaseClient
+                .from('presupuestos')
+                .select('*')
+                .order('dia_limite', { ascending: true });
+
+            if (error) {
+                console.error('Error al cargar presupuestos:', error);
+                return;
+            }
+
+            datosPresupuesto = data || [];
+            renderizarTabla();
+        }
+
+        function cambiarTab(propietario) {
+            tabActual = propietario;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer";
+            });
+            
+            const btnActivo = event.currentTarget;
+            btnActivo.className = "tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer";
+            
+            document.getElementById('titulo-seccion').innerText = `Presupuesto ${propietario}`;
+            renderizarTabla();
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-presupuesto-body');
+            tbody.innerHTML = '';
+
+            const filtrados = datosPresupuesto.filter(item => item.propietario === tabActual);
+            let sumaTotal = 0;
+
+            if (filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">No hay registros cargados para esta categoría.</td></tr>`;
+                document.getElementById('total-seccion').innerText = `Total: $0 COP`;
+                return;
+            }
+
+            filtrados.forEach(item => {
+                sumaTotal += Number(item.monto_estimado);
+                const badgePrioridad = item.prioridad === 1 ? '<span class="bg-rose-500/10 text-rose-400 text-xs px-2 py-0.5 rounded border border-rose-500/20">Alta (1)</span>' :
+                                       item.prioridad === 2 ? '<span class="bg-amber-500/10 text-amber-400 text-xs px-2 py-0.5 rounded border border-amber-500/20">Media (2)</span>' :
+                                       '<span class="bg-blue-500/10 text-blue-400 text-xs px-2 py-0.5 rounded border border-blue-500/20">Ahorro (3)</span>';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-3 px-3 font-medium text-white">${item.concepto}</td>
+                    <td class="py-3 px-3 font-mono text-emerald-400">$${Number(item.monto_estimado).toLocaleString()}</td>
+                    <td class="py-3 px-3 text-slate-300">Día ${item.dia_limite || 'N/A'}</td>
+                    <td class="py-3 px-3">${badgePrioridad}</td>
+                    <td class="py-3 px-3 text-right">
+                        <span class="text-slate-500 text-xs font-mono">ID: ${item.id.substring(0,6)}...</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-seccion').innerText = `Total: $${sumaTotal.toLocaleString()} COP`;
+        }
+
+        async function registrarMonetizacion() {
+            const monto = document.getElementById('input-monto').value;
+            const fuente = document.getElementById('input-fuente').value;
+
+            if (!monto || monto <= 0) {
+                alert('Por favor ingresa un monto válido.');
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from('monetizaciones')
+                .insert([{ fuente: fuente, monto_total: Number(monto) }]);
+
+            if (error) {
+                alert('Error al registrar: ' + error.message);
+            } else {
+                alert(`¡Monetización de $${Number(monto).toLocaleString()} registrada con éxito!`);
+                document.getElementById('input-monto').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
