@@ -3,121 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aeterna & JLZ - Cashflow Manager</title>
-    <!-- Tailwind CSS para diseño profesional -->
+    <title>JLZ & Aeterna Cashflow</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome para iconos -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased pb-12">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased pb-16">
 
-    <!-- Header Principal -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- PANTALLA DE BLOQUEO / PIN -->
+    <div id="lock-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl space-y-6">
+            <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl mx-auto flex items-center justify-center text-2xl border border-emerald-500/20 shadow-lg">
+                <i class="fa-solid fa-vault"></i>
+            </div>
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
-                    <i class="fa-solid fa-vault"></i> JLZ & Aeterna Cashflow
-                </h1>
-                <p class="text-xs text-slate-400">Sistema Dinámico de Distribución y Control</p>
+                <h2 class="text-xl font-bold text-white">JLZ & Aeterna Cashflow</h2>
+                <p class="text-xs text-slate-400 mt-1">Ingresa tu PIN de seguridad (Por defecto: 1234)</p>
             </div>
-            <div id="connection-status" class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Configurando...
+            <div class="flex justify-center gap-3">
+                <input type="password" id="pin-input" maxlength="4" class="w-40 text-center tracking-widest text-2xl bg-slate-950 border border-slate-800 rounded-xl py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono" placeholder="••••">
             </div>
+            <button onclick="verificarPin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer">
+                Desbloquear Sistema
+            </button>
+            <p id="pin-error" class="text-xs text-rose-400 hidden">PIN incorrecto. Inténtalo de nuevo.</p>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
-
-        <!-- Panel de Ingreso de Monetización -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-            <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-coins text-emerald-400"></i> Registrar Nueva Monetización
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <!-- APP PRINCIPAL -->
+    <div id="main-app" class="hidden">
+        <!-- Header -->
+        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+            <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Monto Ingresado (COP)</label>
-                    <input type="number" id="input-monto" placeholder="Ej. 1500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-vault"></i> JLZ & Aeterna Cashflow
+                    </h1>
+                    <p class="text-xs text-slate-400">Control Dinámico y Auditoría Financiera</p>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Fuente / Detalle</label>
-                    <input type="text" id="input-fuente" value="Webcam / Retiro Semanal" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div class="flex items-end">
-                    <button onclick="registrarMonetizacion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo
+                <div class="flex items-center gap-3">
+                    <div id="connection-status" class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado
+                    </div>
+                    <button onclick="bloquearApp()" title="Cerrar Sesión" class="text-slate-400 hover:text-white bg-slate-800 p-2 rounded-xl text-xs cursor-pointer">
+                        <i class="fa-solid fa-lock"></i>
                     </button>
                 </div>
             </div>
-        </section>
+        </header>
 
-        <!-- Selector de Módulos (Tabs) -->
-        <div class="flex border-b border-slate-800 gap-2 overflow-x-auto pb-1">
-            <button onclick="cambiarTab('COMUN')" id="btn-comun" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer">
-                <i class="fa-solid fa-house-chimney mr-1.5"></i> Gastos Comunes
-            </button>
-            <button onclick="cambiarTab('JULIAN')" id="btn-julian" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
-                <i class="fa-solid fa-user mr-1.5"></i> Julián
-            </button>
-            <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
-                <i class="fa-solid fa-gem mr-1.5"></i> Madeleine (Aeterna)
-            </button>
+        <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
+
+            <!-- Panel de Ingreso / Monetización (WC y PCS) -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-emerald-400"></i> Registrar Monetización (Martes / Viernes)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Monto Ingresado (COP)</label>
+                        <input type="number" id="input-monto" placeholder="Ej. 1500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Fuente</label>
+                        <select id="input-fuente" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                            <option value="WC / Retiro Semanal">WC / Retiro Semanal</option>
+                            <option value="PCS / Computadores">PCS / Computadores</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="registrarMonetizacion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Registro Diario de Movimientos (Ingresos / Egresos con descripción) -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-cyan-400"></i> Registrar Gasto o Ingreso Diario
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Tipo</label>
+                        <select id="mov-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                            <option value="EGRESO">Egreso (Gasto)</option>
+                            <option value="INGRESO">Ingreso Extra</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Monto (COP)</label>
+                        <input type="number" id="mov-monto" placeholder="Ej. 25000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Descripción</label>
+                        <input type="text" id="mov-desc" placeholder="Ej. Almuerzo, jabón..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Categoría / Ítem</label>
+                        <select id="mov-categoria" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                            <!-- Se llena dinámicamente -->
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-3 flex justify-end">
+                    <button onclick="registrarMovimientoDiario()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2 px-5 rounded-xl text-xs transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-plus"></i> Guardar Movimiento
+                    </button>
+                </div>
+            </section>
+
+            <!-- Selector de Módulos (Tabs) -->
+            <div class="flex justify-between items-end border-b border-slate-800 gap-2 overflow-x-auto pb-1">
+                <div class="flex gap-2">
+                    <button onclick="cambiarTab('COMUN')" id="btn-comun" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer">
+                        <i class="fa-solid fa-house-chimney mr-1.5"></i> Gastos Comunes
+                    </button>
+                    <button onclick="cambiarTab('JULIAN')" id="btn-julian" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                        <i class="fa-solid fa-user mr-1.5"></i> Julián
+                    </button>
+                    <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                        <i class="fa-solid fa-gem mr-1.5"></i> Madeleine (Aeterna)
+                    </button>
+                </div>
+                <button onclick="abrirModalCrear()" class="mb-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-circle-plus"></i> Nuevo Ítem
+                </button>
+            </div>
+
+            <!-- Contenedor del Presupuesto y Barra de Progreso -->
+            <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 id="titulo-seccion" class="text-md font-bold text-white uppercase tracking-wider">Presupuesto Común</h3>
+                        <p id="progreso-texto" class="text-xs text-slate-400 mt-0.5">Ejecutado: $0 de $0</p>
+                    </div>
+                    <span id="total-seccion" class="text-xs bg-slate-800 text-emerald-400 px-3 py-1.5 rounded-full font-mono font-bold">Total: $0</span>
+                </div>
+
+                <!-- Barra de Progreso Visual -->
+                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
+                    <div id="barra-progreso" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase">
+                                <th class="py-3 px-3">Concepto</th>
+                                <th class="py-3 px-3">Estimado</th>
+                                <th class="py-3 px-3">Ejecutado</th>
+                                <th class="py-3 px-3">Día Límite</th>
+                                <th class="py-3 px-3">Prioridad</th>
+                                <th class="py-3 px-3 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-presupuesto-body" class="divide-y divide-slate-800/60 text-sm">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE EDICIÓN / CREACIÓN -->
+    <div id="modal-item" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 id="modal-titulo" class="text-lg font-bold text-white">Editar Ítem</h3>
+            <input type="hidden" id="modal-id">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Concepto</label>
+                <input type="text" id="modal-concepto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Monto Estimado (COP)</label>
+                    <input type="number" id="modal-monto" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Día Límite (1-31)</label>
+                    <input type="number" id="modal-dia" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white" min="1" max="31">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Prioridad (1: Alta, 2: Media, 3: Ahorro)</label>
+                <select id="modal-prioridad" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                    <option value="1">Alta (1)</option>
+                    <option value="2">Media (2)</option>
+                    <option value="3">Ahorro (3)</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="cerrarModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-medium cursor-pointer">Cancelar</button>
+                <button onclick="guardarItemModal()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Guardar Cambios</button>
+            </div>
         </div>
+    </div>
 
-        <!-- Contenedor de Listas de Presupuesto -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="titulo-seccion" class="text-md font-bold text-white uppercase tracking-wider">Presupuesto Común</h3>
-                <span id="total-seccion" class="text-xs bg-slate-800 text-emerald-400 px-3 py-1 rounded-full font-mono font-bold">Total: $0</span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase">
-                            <th class="py-3 px-3">Concepto</th>
-                            <th class="py-3 px-3">Monto Estimado</th>
-                            <th class="py-3 px-3">Día Límite</th>
-                            <th class="py-3 px-3">Prioridad</th>
-                            <th class="py-3 px-3 text-right">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-presupuesto-body" class="divide-y divide-slate-800/60 text-sm">
-                        <!-- Se llena dinámicamente con JS -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Script de Conexión y Lógica Limpia -->
+    <!-- LÓGICA DE LA APLICACIÓN -->
     <script>
         const SUPABASE_URL = 'https://fxtlvpxmgpvlrzjbcmoz.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4dGx2cHhtZ3B2bHJ6amJjbW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NDcyMjcsImV4cCI6MjEwOTIyMzIyN30.pkMgvRU2NVozfubm8zB-7L-bWhHeANuumIGuSg_JBlc'; // Reemplaza esto con tu llave anon real que empieza por eyJ
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4dGx2cHhtZ3B2bHJ6amJjbW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NDcyMjcsImV4cCI6MjEwOTIyMzIyN30.pkMgvRU2NVozfubm8zB-7L-bWhHeANuumIGuSg_JBlc'; // Reemplaza por tu llave anon real eyJ...
         
         let supabaseClient = null;
         let tabActual = 'COMUN';
         let datosPresupuesto = [];
 
-        window.addEventListener('DOMContentLoaded', async () => {
+        function verificarPin() {
+            const pin = document.getElementById('pin-input').value;
+            if (pin === '1234') { // Puedes cambiar tu PIN aquí
+                document.getElementById('lock-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                inicializarSupabase();
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        function bloquearApp() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('lock-screen').classList.remove('hidden');
+            document.getElementById('pin-input').value = '';
+        }
+
+        async function inicializarSupabase() {
             try {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                
                 const { data, error } = await supabaseClient.from('presupuestos').select('id').limit(1);
                 if (error) throw error;
-
-                document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado';
-                document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
-                
                 await cargarPresupuestos();
             } catch (e) {
                 console.error('Error de conexión:', e);
-                document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span> Error de Conexión';
-                document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
             }
-        });
+        }
 
         async function cargarPresupuestos() {
             if (!supabaseClient) return;
@@ -132,7 +256,19 @@
             }
 
             datosPresupuesto = data || [];
+            poblarSelectCategorias();
             renderizarTabla();
+        }
+
+        function poblarSelectCategorias() {
+            const select = document.getElementById('mov-categoria');
+            select.innerHTML = '';
+            datosPresupuesto.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.id;
+                opt.textContent = `[${item.propietario}] ${item.concepto}`;
+                select.appendChild(opt);
+            });
         }
 
         function cambiarTab(propietario) {
@@ -140,10 +276,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = "tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer";
             });
-            
-            const btnActivo = event.currentTarget;
-            btnActivo.className = "tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer";
-            
+            event.currentTarget.className = "tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer";
             document.getElementById('titulo-seccion').innerText = `Presupuesto ${propietario}`;
             renderizarTabla();
         }
@@ -153,16 +286,23 @@
             tbody.innerHTML = '';
 
             const filtrados = datosPresupuesto.filter(item => item.propietario === tabActual);
-            let sumaTotal = 0;
+            let sumaEstimada = 0;
+            let sumaEjecutada = 0;
 
             if (filtrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">No hay registros cargados para esta categoría.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">No hay registros cargados para esta categoría.</td></tr>`;
                 document.getElementById('total-seccion').innerText = `Total: $0 COP`;
+                document.getElementById('progreso-texto').innerText = `Ejecutado: $0 de $0`;
+                document.getElementById('barra-progreso').style.width = '0%';
                 return;
             }
 
             filtrados.forEach(item => {
-                sumaTotal += Number(item.monto_estimado);
+                const est = Number(item.monto_estimado) || 0;
+                const eje = Number(item.monto_ejecutado) || 0;
+                sumaEstimada += est;
+                sumaEjecutada += eje;
+
                 const badgePrioridad = item.prioridad === 1 ? '<span class="bg-rose-500/10 text-rose-400 text-xs px-2 py-0.5 rounded border border-rose-500/20">Alta (1)</span>' :
                                        item.prioridad === 2 ? '<span class="bg-amber-500/10 text-amber-400 text-xs px-2 py-0.5 rounded border border-amber-500/20">Media (2)</span>' :
                                        '<span class="bg-blue-500/10 text-blue-400 text-xs px-2 py-0.5 rounded border border-blue-500/20">Ahorro (3)</span>';
@@ -170,17 +310,117 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="py-3 px-3 font-medium text-white">${item.concepto}</td>
-                    <td class="py-3 px-3 font-mono text-emerald-400">$${Number(item.monto_estimado).toLocaleString()}</td>
+                    <td class="py-3 px-3 font-mono text-emerald-400">$${est.toLocaleString()}</td>
+                    <td class="py-3 px-3 font-mono text-cyan-400">$${eje.toLocaleString()}</td>
                     <td class="py-3 px-3 text-slate-300">Día ${item.dia_limite || 'N/A'}</td>
                     <td class="py-3 px-3">${badgePrioridad}</td>
-                    <td class="py-3 px-3 text-right">
-                        <span class="text-slate-500 text-xs font-mono">ID: ${item.id.substring(0,6)}...</span>
+                    <td class="py-3 px-3 text-right space-x-2">
+                        <button onclick="abrirModalEditar('${item.id}')" class="text-slate-400 hover:text-emerald-400 p-1 cursor-pointer" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="eliminarItem('${item.id}')" class="text-slate-400 hover:text-rose-400 p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('total-seccion').innerText = `Total: $${sumaTotal.toLocaleString()} COP`;
+            document.getElementById('total-seccion').innerText = `Estimado: $${sumaEstimada.toLocaleString()} COP`;
+            const porcentaje = sumaEstimada > 0 ? Math.min(Math.round((sumaEjecutada / sumaEstimada) * 100), 100) : 0;
+            document.getElementById('progreso-texto').innerText = `Ejecutado: $${sumaEjecutada.toLocaleString()} de $${sumaEstimada.toLocaleString()} (${porcentaje}%)`;
+            document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
+        }
+
+        function abrirModalCrear() {
+            document.getElementById('modal-id').value = '';
+            document.getElementById('modal-concepto').value = '';
+            document.getElementById('modal-monto').value = '';
+            document.getElementById('modal-dia').value = '1';
+            document.getElementById('modal-prioridad').value = '1';
+            document.getElementById('modal-titulo').innerText = `Nuevo Ítem en ${tabActual}`;
+            document.getElementById('modal-item').classList.remove('hidden');
+        }
+
+        function abrirModalEditar(id) {
+            const item = datosPresupuesto.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('modal-id').value = item.id;
+            document.getElementById('modal-concepto').value = item.concepto;
+            document.getElementById('modal-monto').value = item.monto_estimado;
+            document.getElementById('modal-dia').value = item.dia_limite;
+            document.getElementById('modal-prioridad').value = item.prioridad;
+            document.getElementById('modal-titulo').innerText = `Editar Ítem`;
+            document.getElementById('modal-item').classList.remove('hidden');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-item').classList.add('hidden');
+        }
+
+        async function guardarItemModal() {
+            const id = document.getElementById('modal-id').value;
+            const concepto = document.getElementById('modal-concepto').value;
+            const monto = Number(document.getElementById('modal-monto').value);
+            const dia = Number(document.getElementById('modal-dia').value);
+            const prioridad = Number(document.getElementById('modal-prioridad').value);
+
+            if (!concepto || !monto) {
+                alert('Completa los campos obligatorios.');
+                return;
+            }
+
+            if (id) {
+                // Actualizar
+                const { error } = await supabaseClient.from('presupuestos').update({
+                    concepto, monto_estimado: monto, dia_limite: dia, prioridad
+                }).eq('id', id);
+                if (error) alert('Error: ' + error.message);
+            } else {
+                // Crear nuevo
+                const { error } = await supabaseClient.from('presupuestos').insert([{
+                    propietario: tabActual, concepto, monto_estimado: monto, monto_ejecutado: 0, tipo_fecha: 'FIXED', dia_limite: dia, prioridad
+                }]);
+                if (error) alert('Error: ' + error.message);
+            }
+
+            cerrarModal();
+            await cargarPresupuestos();
+        }
+
+        async function eliminarItem(id) {
+            if (!confirm('¿Estás seguro de eliminar este ítem?')) return;
+            const { error } = await supabaseClient.from('presupuestos').delete().eq('id', id);
+            if (error) alert('Error: ' + error.message);
+            else await cargarPresupuestos();
+        }
+
+        async function registrarMovimientoDiario() {
+            const tipo = document.getElementById('mov-tipo').value;
+            const monto = Number(document.getElementById('mov-monto').value);
+            const desc = document.getElementById('mov-desc').value;
+            const categoriaId = document.getElementById('mov-categoria').value;
+
+            if (!monto || monto <= 0 || !desc) {
+                alert('Por favor ingresa un monto válido y una descripción.');
+                return;
+            }
+
+            // Buscar ítem actual para actualizar su ejecutado
+            const item = datosPresupuesto.find(i => i.id === categoriaId);
+            if (!item) return;
+
+            const nuevoEjecutado = tipo === 'EGRESO' ? Number(item.monto_ejecutado) + monto : Math.max(0, Number(item.monto_ejecutado) - monto);
+
+            // Actualizar en Supabase
+            const { error } = await supabaseClient.from('presupuestos').update({
+                monto_ejecutado: nuevoEjecutado
+            }).eq('id', categoriaId);
+
+            if (error) {
+                alert('Error al registrar movimiento: ' + error.message);
+            } else {
+                alert(`¡Movimiento registrado con éxito! (${desc}: $${monto.toLocaleString()})`);
+                document.getElementById('mov-monto').value = '';
+                document.getElementById('mov-desc').value = '';
+                await cargarPresupuestos();
+            }
         }
 
         async function registrarMonetizacion() {
