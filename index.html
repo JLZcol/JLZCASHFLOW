@@ -91,34 +91,29 @@
         </section>
 
     </main>
-   
-    <!-- Script de Conexión y Lógica Robusta -->
+
+    <!-- Script de Conexión y Lógica Limpia -->
     <script>
-        // Credenciales oficiales de tu Supabase
         const SUPABASE_URL = 'https://fxtlvpxmgpvlrzjbcmoz.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4dGx2cHhtZ3B2bHJ6amJjbW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NDcyMjcsImV4cCI6MjEwOTIyMzIyN30.pkMgvRU2NVozfubm8zB-7L-bWhHeANuumIGuSg_JBlc'; 
+        const SUPABASE_ANON_KEY = 'AQUI_TU_LLAVE_EYJ_COMPLETA'; // Reemplaza esto con tu llave anon real que empieza por eyJ
         
         let supabaseClient = null;
         let tabActual = 'COMUN';
         let datosPresupuesto = [];
 
-        // Inicializar Supabase al cargar la ventana
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
-                // Prueba rápida de lectura para validar conexión real
                 const { data, error } = await supabaseClient.from('presupuestos').select('id').limit(1);
-                
                 if (error) throw error;
 
                 document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado';
                 document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5";
                 
-                // Cargar los registros reales
                 await cargarPresupuestos();
             } catch (e) {
-                console.error('Error de conexión con Supabase:', e);
+                console.error('Error de conexión:', e);
                 document.getElementById('connection-status').innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span> Error de Conexión';
                 document.getElementById('connection-status').className = "text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1.5";
             }
