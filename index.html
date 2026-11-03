@@ -80,130 +80,123 @@
 
         <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
 
-            <!-- TARJETA BOLSILLO EXTRA -->
-            <div id="card-dinero-disponible" class="rounded-2xl p-4 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border" style="background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(15,23,42,0.9)); border-color: rgba(139,92,246,0.3);">
-                <div>
-                    <span id="titulo-tarjeta-disponible" class="text-xs font-semibold uppercase tracking-wider text-violet-400"><i class="fa-solid fa-wallet mr-1"></i> Bolsillo Extra / Hormiga</span>
-                    <h3 id="monto-dinero-disponible" class="text-2xl font-extrabold text-white font-mono mt-0.5">$0 COP</h3>
-                </div>
-                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 text-right w-full md:w-auto">
-                    <span class="text-[10px] text-slate-400 block">Límite Diario Autorizado</span>
-                    <span id="monto-limite-diario" class="text-sm font-bold text-emerald-400 font-mono">$0 COP / día</span>
-                </div>
-            </div>
-
-            <!-- REGISTRO MONETIZACIÓN GLOBAL (WC / PCS) -->
-            <section class="rounded-2xl p-5 shadow-xl border" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-coins" style="color: var(--primary);"></i> Registrar Monetización (Martes / Viernes)
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Monto Ingresado (COP)</label>
-                        <input type="number" id="input-monto" placeholder="Ej. 1500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Fuente</label>
-                        <select id="input-fuente" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none">
-                            <option value="WC / Retiro Semanal">WC / Retiro Semanal</option>
-                            <option value="PCS / Computadores">PCS / Computadores</option>
-                        </select>
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="registrarMonetizacionInteligente()" class="w-full font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer text-slate-950" style="background-color: var(--primary);">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo (Trilateral)
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- REGISTRO MOVIMIENTO DIARIO (EGRESO O INGRESO EXTRA PERSONAL) -->
-            <section class="rounded-2xl p-5 shadow-xl border" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-receipt text-cyan-400"></i> Registrar Gasto o Ingreso Extra Personal
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Tipo de Movimiento</label>
-                        <select id="mov-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
-                            <option value="EGRESO">Egreso / Pago Real</option>
-                            <option value="INGRESO">Ingreso Extra Personal</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Monto (COP)</label>
-                        <input type="number" id="mov-monto" placeholder="Ej. 300000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Descripción</label>
-                        <input type="text" id="mov-desc" placeholder="Ej. Freelance, venta, almuerzo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Ítem Destino</label>
-                        <select id="mov-categoria" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white"></select>
-                    </div>
-                </div>
-                <div class="mt-3 flex justify-end">
-                    <button onclick="registrarMovimientoDiario()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2 px-5 rounded-xl text-xs transition-all flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-plus"></i> Guardar Movimiento
-                    </button>
-                </div>
-            </section>
-
-            <!-- TABS DINÁMICOS SEGÚN ROL -->
+            <!-- TABS DE NAVEGACIÓN SUPERIOR FIJOS -->
             <div class="flex justify-between items-end border-b gap-2 overflow-x-auto pb-1" style="border-color: var(--border-color);">
                 <div id="tabs-container" class="flex gap-2"></div>
-                <button onclick="abrirModalCrear()" class="mb-2 bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5 cursor-pointer border" style="color: var(--primary); border-color: rgba(16,185,129,0.3);">
+                <button onclick="abrirModalCrear()" id="btn-nuevo-item-tab" class="mb-2 bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-xl font-medium hidden items-center gap-1.5 cursor-pointer border" style="color: var(--primary); border-color: rgba(16,185,129,0.3);">
                     <i class="fa-solid fa-circle-plus"></i> Nuevo Ítem
                 </button>
             </div>
 
-            <!-- TABLA PRESUPUESTO -->
-            <section class="rounded-2xl p-5 shadow-xl space-y-4 border" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <div class="flex justify-between items-center">
+            <!-- VISTA 1: PRESUPUESTOS Y BOLSILLO -->
+            <div id="vista-presupuesto" class="space-y-6">
+                <!-- TARJETA BOLSILLO / DINERO DISPONIBLE -->
+                <div id="card-dinero-disponible" class="rounded-2xl p-4 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border" style="background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(15,23,42,0.9)); border-color: rgba(139,92,246,0.3);">
                     <div>
-                        <h3 id="titulo-seccion" class="text-md font-bold text-white uppercase tracking-wider">Presupuesto Común</h3>
-                        <p id="progreso-texto" class="text-xs text-slate-400 mt-0.5">Distribuido: $0 de $0</p>
+                        <span id="titulo-tarjeta-disponible" class="text-xs font-semibold uppercase tracking-wider text-violet-400"><i class="fa-solid fa-wallet mr-1"></i> Bolsillo Extra / Hormiga</span>
+                        <h3 id="monto-dinero-disponible" class="text-2xl font-extrabold text-white font-mono mt-0.5">$0 COP</h3>
                     </div>
-                    <span id="total-seccion" class="text-xs bg-slate-800 px-3 py-1.5 rounded-full font-mono font-bold" style="color: var(--primary);">Total: $0</span>
+                    <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 text-right w-full md:w-auto">
+                        <span class="text-[10px] text-slate-400 block">Límite Diario Autorizado</span>
+                        <span id="monto-limite-diario" class="text-sm font-bold text-emerald-400 font-mono">$0 COP / día</span>
+                    </div>
                 </div>
 
-                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
-                    <div id="barra-progreso" class="h-2.5 rounded-full transition-all duration-500" style="width: 0%; background-color: var(--primary);"></div>
-                </div>
+                <!-- TABLA PRESUPUESTO -->
+                <section class="rounded-2xl p-5 shadow-xl space-y-4 border" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 id="titulo-seccion" class="text-md font-bold text-white uppercase tracking-wider">Presupuesto Común</h3>
+                            <p id="progreso-texto" class="text-xs text-slate-400 mt-0.5">Distribuido: $0 de $0</p>
+                        </div>
+                        <span id="total-seccion" class="text-xs bg-slate-800 px-3 py-1.5 rounded-full font-mono font-bold" style="color: var(--primary);">Total: $0</span>
+                    </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b text-xs text-slate-400 uppercase" style="border-color: var(--border-color);">
-                                <th class="py-3 px-3">Concepto</th>
-                                <th class="py-3 px-3">Estimado</th>
-                                <th class="py-3 px-3">Distribuido / Reunido</th>
-                                <th class="py-3 px-3">Pagado / Salidas</th>
-                                <th class="py-3 px-3">Día Límite</th>
-                                <th class="py-3 px-3">Prioridad</th>
-                                <th class="py-3 px-3 text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-presupuesto-body" class="divide-y divide-slate-800/60 text-sm"></tbody>
-                    </table>
-                </div>
-            </section>
+                    <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
+                        <div id="barra-progreso" class="h-2.5 rounded-full transition-all duration-500" style="width: 0%; background-color: var(--primary);"></div>
+                    </div>
 
-            <!-- HISTORIAL DE MOVIMIENTOS FILTRADO -->
-            <section class="rounded-2xl p-5 shadow-xl border space-y-3" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-md font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-receipt text-cyan-400"></i> Historial de Movimientos (<span id="rol-historial-texto">COMUN</span>)
-                    </h3>
-                    <span class="text-[10px] text-slate-400">Filtrado por Pestaña</span>
-                </div>
-                <div id="contenedor-historial-egresos" class="space-y-2 max-h-60 overflow-y-auto pr-2">
-                    <p class="text-xs text-slate-500 italic text-center py-4">No hay movimientos registrados aún en esta vista.</p>
-                </div>
-            </section>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b text-xs text-slate-400 uppercase" style="border-color: var(--border-color);">
+                                    <th class="py-3 px-3">Concepto</th>
+                                    <th class="py-3 px-3">Estimado</th>
+                                    <th class="py-3 px-3">Distribuido / Reunido (Faltante)</th>
+                                    <th class="py-3 px-3">Pagado / Salidas</th>
+                                    <th class="py-3 px-3">Día Límite</th>
+                                    <th class="py-3 px-3">Prioridad</th>
+                                    <th class="py-3 px-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-presupuesto-body" class="divide-y divide-slate-800/60 text-sm"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
-            <!-- HISTORIAL PERMANENTE CON SCROLL (BANCOLOMBIA) -->
+            <!-- VISTA 2: PESTAÑA DEDICADA DE ACCIONES / REGISTROS -->
+            <div id="vista-acciones" class="space-y-6 hidden">
+                <!-- REGISTRO MONETIZACIÓN GLOBAL (WC / PCS) -->
+                <section class="rounded-2xl p-5 shadow-xl border" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                    <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-coins" style="color: var(--primary);"></i> Registrar Monetización (Martes / Viernes)
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Monto Ingresado (COP)</label>
+                            <input type="number" id="input-monto" placeholder="Ej. 1500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Fuente</label>
+                            <select id="input-fuente" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none">
+                                <option value="WC / Retiro Semanal">WC / Retiro Semanal</option>
+                                <option value="PCS / Computadores">PCS / Computadores</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="registrarMonetizacionInteligente()" class="w-full font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer text-slate-950" style="background-color: var(--primary);">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo (Trilateral)
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- REGISTRO MOVIMIENTO DIARIO -->
+                <section class="rounded-2xl p-5 shadow-xl border" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                    <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-cyan-400"></i> Registrar Gasto o Ingreso Extra Personal
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Tipo de Movimiento</label>
+                            <select id="mov-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                                <option value="EGRESO">Egreso / Pago Real</option>
+                                <option value="INGRESO">Ingreso Extra Personal</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Monto (COP)</label>
+                            <input type="number" id="mov-monto" placeholder="Ej. 300000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Descripción</label>
+                            <input type="text" id="mov-desc" placeholder="Ej. Freelance, almuerzo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Ítem Destino</label>
+                            <select id="mov-categoria" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white"></select>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-end">
+                        <button onclick="registrarMovimientoDiario()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2 px-5 rounded-xl text-xs transition-all flex items-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> Guardar Movimiento
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- HISTORIAL PERMANENTE CON SCROLL (BANCOLOMBIA) - TARJETAS INDEPENDIENTES Y ACTUALIZADAS -->
             <section class="rounded-2xl p-5 shadow-xl border space-y-3" style="background-color: var(--card-bg); border-color: var(--border-color);">
                 <div class="flex justify-between items-center">
                     <h3 class="text-md font-bold text-white flex items-center gap-2">
@@ -211,9 +204,22 @@
                     </h3>
                     <span class="text-[10px] text-slate-400">Sincronizado</span>
                 </div>
-                <p class="text-xs text-slate-400">Desplázate hacia abajo para ver todas las transacciones pasadas.</p>
+                <p class="text-xs text-slate-400">Cada tarjeta refleja la distribución de su monetización y se actualiza al corregir ítems manualmente.</p>
                 <div id="contenedor-historial-distribucion" class="space-y-3 max-h-80 overflow-y-auto pr-2">
                     <p class="text-xs text-slate-500 italic text-center py-4">Cargando historial...</p>
+                </div>
+            </section>
+
+            <!-- HISTORIAL DE MOVIMIENTOS REUBICADO AL FINAL -->
+            <section class="rounded-2xl p-5 shadow-xl border space-y-3" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-md font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-cyan-400"></i> Historial de Movimientos Diarios (<span id="rol-historial-texto">COMUN</span>)
+                    </h3>
+                    <span class="text-[10px] text-slate-400">Filtrado por Pestaña</span>
+                </div>
+                <div id="contenedor-historial-egresos" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                    <p class="text-xs text-slate-500 italic text-center py-4">No hay movimientos registrados aún en esta vista.</p>
                 </div>
             </section>
 
@@ -354,6 +360,9 @@
                     <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
                         <i class="fa-solid fa-gem mr-1.5"></i> Madeleine
                     </button>
+                    <button onclick="cambiarTab('ACCIONES')" id="btn-acciones" class="tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-cyan-400 hover:text-cyan-300 cursor-pointer">
+                        <i class="fa-solid fa-gears mr-1.5"></i> Registrar / Acciones
+                    </button>
                 `;
             } else {
                 container.innerHTML = `
@@ -362,6 +371,9 @@
                     </button>
                     <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
                         <i class="fa-solid fa-gem mr-1.5"></i> Madeleine
+                    </button>
+                    <button onclick="cambiarTab('ACCIONES')" id="btn-acciones" class="tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-cyan-400 hover:text-cyan-300 cursor-pointer">
+                        <i class="fa-solid fa-gears mr-1.5"></i> Registrar / Acciones
                     </button>
                 `;
             }
@@ -416,8 +428,7 @@
         function poblarSelectCategoriasContextual() {
             const select = document.getElementById('mov-categoria');
             select.innerHTML = '';
-            const filtrados = datosPresupuesto.filter(i => i.propietario.toUpperCase() === tabActual.toUpperCase());
-            filtrados.forEach(item => {
+            datosPresupuesto.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.id;
                 opt.textContent = `[${item.propietario}] ${item.concepto}`;
@@ -427,20 +438,34 @@
 
         function cambiarTab(propietario) {
             tabActual = propietario;
-            ['comun', 'julian', 'madeleine'].forEach(tab => {
+            ['comun', 'julian', 'madeleine', 'acciones'].forEach(tab => {
                 const btn = document.getElementById(`btn-${tab}`);
                 if (btn) btn.className = "tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer";
             });
+
             const activeBtn = document.getElementById(`btn-${propietario.toLowerCase()}`);
             if (activeBtn) activeBtn.className = "tab-btn px-4 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer";
-            
-            document.getElementById('titulo-seccion').innerText = `Presupuesto ${propietario}`;
-            document.getElementById('rol-historial-texto').innerText = propietario;
-            
-            actualizarTarjetaDineroDisponible();
-            poblarSelectCategoriasContextual();
-            renderizarTabla();
-            cargarMovimientosDiariosSupabase();
+
+            const vistaPresupuesto = document.getElementById('vista-presupuesto');
+            const vistaAcciones = document.getElementById('vista-acciones');
+            const btnNuevoItem = document.getElementById('btn-nuevo-item-tab');
+
+            if (propietario === 'ACCIONES') {
+                vistaPresupuesto.classList.add('hidden');
+                vistaAcciones.classList.remove('hidden');
+                btnNuevoItem.classList.add('hidden');
+            } else {
+                vistaPresupuesto.classList.remove('hidden');
+                vistaAcciones.classList.add('hidden');
+                btnNuevoItem.classList.remove('hidden');
+
+                document.getElementById('titulo-seccion').innerText = `Presupuesto ${propietario}`;
+                document.getElementById('rol-historial-texto').innerText = propietario;
+
+                actualizarTarjetaDineroDisponible();
+                renderizarTabla();
+                cargarMovimientosDiariosSupabase();
+            }
         }
 
         function actualizarTarjetaDineroDisponible() {
@@ -469,7 +494,6 @@
             }
         }
 
-        // RENDERIZADO CON CHULITO LIMPIO (✓)
         function renderizarTabla() {
             const tbody = document.getElementById('tabla-presupuesto-body');
             tbody.innerHTML = '';
@@ -481,7 +505,7 @@
             if (filtrados.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500">No hay registros cargados.</td></tr>`;
                 document.getElementById('total-seccion').innerText = `Estimado: $0 COP`;
-                document.getElementById('progreso-texto').innerText = `Distribuido: $0 de $0 (0%)`;
+                document.getElementById('progreso-texto').innerText = `Distribuido: $0 de $0`;
                 document.getElementById('barra-progreso').style.width = '0%';
                 return;
             }
@@ -493,9 +517,14 @@
                 sumaEstimada += est;
                 sumaDistribuida += dis;
 
+                const faltante = Math.max(0, est - dis);
                 const estaCompletado = (est > 0 && pag >= est);
                 const estiloFila = estaCompletado ? 'bg-emerald-950/40 border-l-4 border-emerald-500' : '';
                 const iconoChulito = estaCompletado ? '<span class="ml-2 text-emerald-400 font-bold text-base" title="Completado"><i class="fa-solid fa-check"></i></span>' : '';
+
+                const textoFaltante = estaCompletado 
+                    ? '<span class="text-xs text-emerald-400 block font-normal">¡Completado!</span>' 
+                    : `<span class="text-xs text-slate-400 block font-normal">Falta: $${faltante.toLocaleString()}</span>`;
 
                 const badgePrioridad = item.prioridad === 1 ? '<span class="bg-rose-500/10 text-rose-400 text-xs px-2 py-0.5 rounded border border-rose-500/20">Alta (1)</span>' :
                                        item.prioridad === 2 ? '<span class="bg-amber-500/10 text-amber-400 text-xs px-2 py-0.5 rounded border border-amber-500/20">Media (2)</span>' :
@@ -506,7 +535,10 @@
                 tr.innerHTML = `
                     <td class="py-3 px-3 font-medium text-white flex items-center">${item.concepto} ${iconoChulito}</td>
                     <td class="py-3 px-3 font-mono" style="color: var(--primary);">$${est.toLocaleString()}</td>
-                    <td class="py-3 px-3 font-mono text-cyan-400">$${dis.toLocaleString()}</td>
+                    <td class="py-3 px-3 font-mono text-cyan-400">
+                        $${dis.toLocaleString()}
+                        ${textoFaltante}
+                    </td>
                     <td class="py-3 px-3 font-mono text-amber-300 font-bold">$${pag.toLocaleString()}</td>
                     <td class="py-3 px-3 text-slate-300">Día ${item.dia_limite || 'N/A'}</td>
                     <td class="py-3 px-3">${badgePrioridad}</td>
@@ -524,7 +556,6 @@
             document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
         }
 
-        // REGISTRO DE EGRESO O INGRESO EXTRA PERSONAL (CORREGIDO Y BLINDADO)
         async function registrarMovimientoDiario() {
             const tipo = document.getElementById('mov-tipo').value;
             const monto = Number(document.getElementById('mov-monto').value);
@@ -532,7 +563,7 @@
             const categoriaId = document.getElementById('mov-categoria').value;
 
             if (!monto || monto <= 0 || !desc) {
-                alert('Por favor ingresa un monto válido y una descripción.');
+                alert('Por favor ingresa aúno monto válido y una descripción.');
                 return;
             }
 
@@ -548,7 +579,6 @@
                 }).eq('id', item.id);
                 detalleTransaccion = `[${item.propietario}] Pago ${item.concepto} (${desc})`;
             } else {
-                // INGRESO EXTRA PERSONAL: Se suma DIRECTAMENTE al monto reunido / distribuido
                 const disActual = Number(item.monto_ejecutado) || 0;
                 await supabaseClient.from('presupuestos').update({
                     monto_ejecutado: disActual + monto
@@ -558,7 +588,6 @@
 
             const fechaStr = new Date().toLocaleString();
 
-            // 1. Guardar en movimientos diarios sin filtros complejos para evitar errores de API
             await supabaseClient.from('movimientos_diarios').insert([{
                 propietario: item.propietario.toUpperCase(),
                 tipo: tipo,
@@ -568,7 +597,6 @@
                 fecha: fechaStr
             }]);
 
-            // 2. Registrar en la Guía de Transferencia Permanente (Bancolombia)
             let logTransferencia = [{ destino: detalleTransaccion, monto: monto }];
             await supabaseClient.from('historial_distribuciones').insert([{
                 fecha: fechaStr,
@@ -577,7 +605,7 @@
                 detalles: JSON.stringify(logTransferencia)
             }]);
 
-            alert(`¡Movimiento registrado con éxito y añadido a la Guía Bancolombia!\n(${desc}: $${monto.toLocaleString()})`);
+            alert(`¡Movimiento registrado con éxito!\n(${desc}: $${monto.toLocaleString()})`);
             document.getElementById('mov-monto').value = '';
             document.getElementById('mov-desc').value = '';
             await cargarPresupuestos();
@@ -585,25 +613,20 @@
             await cargarHistorialSupabase();
         }
 
-        // CARGA SEGURA DE MOVIMIENTOS DIARIOS (SIN ERRORES DE SINTAXIS)
         async function cargarMovimientosDiariosSupabase() {
             if (!supabaseClient) return;
-
-            // Traemos todos y filtramos en memoria por JavaScript para evitar errores de sintaxis en Supabase REST API
             const { data, error } = await supabaseClient
                 .from('movimientos_diarios')
                 .select('*')
                 .order('id', { ascending: false });
 
             const contenedor = document.getElementById('contenedor-historial-egresos');
-            
             if (error || !data) {
                 contenedor.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-4">Error al cargar movimientos.</p>`;
                 return;
             }
 
             const filtrados = data.filter(mov => mov.propietario.toUpperCase() === tabActual.toUpperCase());
-
             if (filtrados.length === 0) {
                 contenedor.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-4">No hay movimientos registrados aún en ${tabActual}.</p>`;
                 return;
@@ -650,6 +673,7 @@
             document.getElementById('modal-item').classList.add('hidden');
         }
 
+        // GUARDAR / EDITAR ÍTEM: ACTUALIZA EL ÍTEM Y BUSCA CUALQUIER REFERENCIA EN LA ÚLTIMA TARJETA PARA REFLEJAR EL VALOR CORREGIDO
         async function guardarItemModal() {
             const id = document.getElementById('modal-id').value;
             const concepto = document.getElementById('modal-concepto').value;
@@ -664,10 +688,51 @@
             }
 
             if (id) {
+                // 1. Actualizar presupuesto
                 await supabaseClient.from('presupuestos').update({
                     concepto, monto_estimado: monto, monto_ejecutado: ejecutado, dia_limite: dia, prioridad
                 }).eq('id', id);
+
+                // 2. BUSCAR LA ÚLTIMA TARJETA DE MONETIZACIÓN Y ACTUALIZAR SU MONTO EN EL DETALLE CORRESPONDIENTE
+                const { data: ultimoHistorial } = await supabaseClient
+                    .from('historial_distribuciones')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(1);
+
+                if (ultimoHistorial && ultimoHistorial.length > 0) {
+                    let reg = ultimoHistorial[0];
+                    let itemsDetalle = [];
+                    try {
+                        itemsDetalle = JSON.parse(reg.detalles);
+                    } catch(e) {
+                        itemsDetalle = [];
+                    }
+
+                    let encontrado = false;
+                    itemsDetalle.forEach(i => {
+                        // Compara si el detalle incluye el nombre del concepto que estamos editando
+                        if (i.destino.toUpperCase().includes(concepto.toUpperCase())) {
+                            i.monto = ejecutado;
+                            encontrado = true;
+                        }
+                    });
+
+                    if (!encontrado && ejecutado > 0) {
+                        itemsDetalle.push({ destino: `[${tabActual.toUpperCase()}] ${concepto}`, monto: ejecutado });
+                    }
+
+                    // Recalcular el total de la tarjeta sumando todos sus desgloses actuales
+                    let nuevoTotalTarjeta = itemsDetalle.reduce((sum, i) => sum + Number(i.monto), 0);
+
+                    await supabaseClient.from('historial_distribuciones').update({
+                        monto_total: nuevoTotalTarjeta,
+                        detalles: JSON.stringify(itemsDetalle)
+                    }).eq('id', reg.id);
+                }
+
             } else {
+                // Crear nuevo ítem
                 await supabaseClient.from('presupuestos').insert([{
                     propietario: tabActual.toUpperCase(), concepto, monto_estimado: monto, monto_ejecutado: ejecutado, monto_pagado: 0, tipo_fecha: 'FIXED', dia_limite: dia, prioridad
                 }]);
@@ -675,6 +740,7 @@
 
             cerrarModal();
             await cargarPresupuestos();
+            await cargarHistorialSupabase();
         }
 
         async function eliminarItem(id) {
@@ -692,6 +758,7 @@
             return (Number(a.prioridad) || 1) - (Number(b.prioridad) || 1);
         }
 
+        // MOTOR TRILATERAL CON NUEVA TARJETA INDEPENDIENTE POR CADA MONETIZACIÓN
         async function registrarMonetizacionInteligente() {
             const montoTotalIngreso = Number(document.getElementById('input-monto').value);
             const fuente = document.getElementById('input-fuente').value;
@@ -706,16 +773,24 @@
             let dineroRestante = montoTotalIngreso;
             let logDistribucion = [];
 
+            // 1. 5% AL BOLSILLO EXTRA COMÚN (CONTROLANDO TOPE ESTIMADO)
             let fondoReserva5Porciento = Math.round(dineroRestante * 0.05);
             let itemExtraHormiga = datosPresupuesto.find(i => i.propietario.toUpperCase() === 'COMUN' && i.concepto.toLowerCase().includes('extra'));
             
-            if (itemExtraHormiga && fondoReserva5Porciento > 0) {
-                const nuevoEj = Number(itemExtraHormiga.monto_ejecutado) + fondoReserva5Porciento;
-                dineroRestante -= fondoReserva5Porciento;
-                await supabaseClient.from('presupuestos').update({ monto_ejecutado: nuevoEj }).eq('id', itemExtraHormiga.id);
-                logDistribucion.push({ destino: `[COMÚN] ${itemExtraHormiga.concepto} (5%)`, monto: fondoReserva5Porciento });
+            if (itemExtraHormiga) {
+                const estimadoExtra = Number(itemExtraHormiga.monto_estimado) || 500000;
+                const actualExtra = Number(itemExtraHormiga.monto_ejecutado) || 0;
+                const espacioExtra = Math.max(0, estimadoExtra - actualExtra);
+
+                const aporteExtra = Math.min(fondoReserva5Porciento, espacioExtra);
+                if (aporteExtra > 0) {
+                    dineroRestante -= aporteExtra;
+                    await supabaseClient.from('presupuestos').update({ monto_ejecutado: actualExtra + aporteExtra }).eq('id', itemExtraHormiga.id);
+                    logDistribucion.push({ destino: `[COMÚN] ${itemExtraHormiga.concepto} (5%)`, monto: aporteExtra });
+                }
             }
 
+            // 2. FONDEO TRILATERAL DE GASTOS COMUNES
             let topeComunPermitido = dineroRestante * 0.50;
             let gastadoEnComun = 0;
 
@@ -741,6 +816,7 @@
                 }
             }
 
+            // 3. REPARTO 50/50 POST-COMUNES
             let bolsaJulian = dineroRestante / 2;
             let bolsaMadeleine = dineroRestante / 2;
 
@@ -791,10 +867,11 @@
                 detalles: JSON.stringify(logDistribucion)
             }]);
 
-            alert(`¡Distribución Exitosa!\nGuía de transferencia guardada permanentemente.`);
+            alert(`¡Distribución Exitosa!\nSe ha creado una nueva tarjeta independiente en la Guía Bancolombia.`);
             document.getElementById('input-monto').value = '';
             await cargarPresupuestos();
             await cargarHistorialSupabase();
+            cambiarTab('COMUN');
         }
 
         async function cargarHistorialSupabase() {
@@ -829,10 +906,10 @@
                     <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 shadow-lg">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                             <div>
-                                <span class="text-xs text-amber-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> Transacción: $${Number(reg.monto_total).toLocaleString()} COP</span>
+                                <span class="text-xs text-amber-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> Monetización / Tarjeta: $${Number(reg.monto_total).toLocaleString()} COP</span>
                                 <span class="text-[10px] text-slate-500 block">${reg.fuente} - ${reg.fecha}</span>
                             </div>
-                            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20 font-bold">Guardado</span>
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20 font-bold">Activo</span>
                         </div>
                         <div class="space-y-1">
                             ${htmlDetalles}
