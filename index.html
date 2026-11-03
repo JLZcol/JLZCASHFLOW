@@ -13,23 +13,23 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased pb-16">
 
-    <!-- PANTALLA DE BLOQUEO / PIN -->
+    <!-- PANTALLA DE BLOQUEO / PIN INDEPENDIENTE -->
     <div id="lock-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl space-y-6">
-            <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl mx-auto flex items-center justify-center text-2xl border border-emerald-500/20 shadow-lg">
+            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-500/20 to-violet-500/20 text-emerald-400 rounded-2xl mx-auto flex items-center justify-center text-2xl border border-emerald-500/30 shadow-lg">
                 <i class="fa-solid fa-vault"></i>
             </div>
             <div>
                 <h2 class="text-xl font-bold text-white">JLZ & Aeterna Cashflow</h2>
-                <p class="text-xs text-slate-400 mt-1">Ingresa tu PIN de seguridad (Por defecto: 1234)</p>
+                <p class="text-xs text-slate-400 mt-1">Ingresa tu PIN personal para acceder</p>
             </div>
             <div class="flex justify-center gap-3">
                 <input type="password" id="pin-input" maxlength="4" class="w-40 text-center tracking-widest text-2xl bg-slate-950 border border-slate-800 rounded-xl py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono" placeholder="••••">
             </div>
-            <button onclick="verificarPin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer">
-                Desbloquear Sistema
+            <button onclick="verificarPin()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 cursor-pointer">
+                Iniciar Sesión
             </button>
-            <p id="pin-error" class="text-xs text-rose-400 hidden">PIN incorrecto. Inténtalo de nuevo.</p>
+            <p id="pin-error" class="text-xs text-rose-400 hidden">PIN incorrecto. Verifica tu clave personal.</p>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
                     <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
                         <i class="fa-solid fa-vault"></i> JLZ & Aeterna Cashflow
                     </h1>
-                    <p class="text-xs text-slate-400">Control Dinámico y Auditoría Financiera</p>
+                    <p id="user-welcome" class="text-xs text-slate-400">Control Financiero Inteligente</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="connection-status" class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
@@ -57,7 +57,7 @@
 
         <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
 
-            <!-- Panel de Ingreso / Monetización (WC y PCS) -->
+            <!-- Panel de Monetización Global (Martes / Viernes) -->
             <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-coins text-emerald-400"></i> Registrar Monetización (Martes / Viernes)
@@ -76,13 +76,13 @@
                     </div>
                     <div class="flex items-end">
                         <button onclick="registrarMonetizacion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Distribuir al Vuelo (50/50)
                         </button>
                     </div>
                 </div>
             </section>
 
-            <!-- Registro Diario de Movimientos (Ingresos / Egresos con descripción) -->
+            <!-- Registro Diario de Movimientos (Contextual) -->
             <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-receipt text-cyan-400"></i> Registrar Gasto o Ingreso Diario
@@ -101,12 +101,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Descripción</label>
-                        <input type="text" id="mov-desc" placeholder="Ej. Almuerzo, jabón..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
+                        <input type="text" id="mov-desc" placeholder="Ej. Almuerzo, gasolina..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1">Categoría / Ítem</label>
                         <select id="mov-categoria" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white">
-                            <!-- Se llena dinámicamente -->
+                            <!-- Filtrado dinámico según pestaña activa -->
                         </select>
                     </div>
                 </div>
@@ -117,18 +117,10 @@
                 </div>
             </section>
 
-            <!-- Selector de Módulos (Tabs) -->
+            <!-- Selector de Módulos (Tabs Dinámicos por Rol) -->
             <div class="flex justify-between items-end border-b border-slate-800 gap-2 overflow-x-auto pb-1">
-                <div class="flex gap-2">
-                    <button onclick="cambiarTab('COMUN')" id="btn-comun" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer">
-                        <i class="fa-solid fa-house-chimney mr-1.5"></i> Gastos Comunes
-                    </button>
-                    <button onclick="cambiarTab('JULIAN')" id="btn-julian" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
-                        <i class="fa-solid fa-user mr-1.5"></i> Julián
-                    </button>
-                    <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
-                        <i class="fa-solid fa-gem mr-1.5"></i> Madeleine (Aeterna)
-                    </button>
+                <div id="tabs-container" class="flex gap-2">
+                    <!-- Se inyecta dinámicamente según sea Julián o Madeleine -->
                 </div>
                 <button onclick="abrirModalCrear()" class="mb-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-xl font-medium flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-circle-plus"></i> Nuevo Ítem
@@ -212,17 +204,52 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4dGx2cHhtZ3B2bHJ6amJjbW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NDcyMjcsImV4cCI6MjEwOTIyMzIyN30.pkMgvRU2NVozfubm8zB-7L-bWhHeANuumIGuSg_JBlc'; // Reemplaza por tu llave anon real eyJ...
         
         let supabaseClient = null;
+        let usuarioActual = null; // 'JULIAN' o 'MADELEINE'
         let tabActual = 'COMUN';
         let datosPresupuesto = [];
 
         function verificarPin() {
             const pin = document.getElementById('pin-input').value;
-            if (pin === '1234') { // Puedes cambiar tu PIN aquí
-                document.getElementById('lock-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                inicializarSupabase();
+            if (pin === '0328') {
+                usuarioActual = 'JULIAN';
+                tabActual = 'COMUN';
+                iniciarSesionExitosa('Julián');
+            } else if (pin === '2803') {
+                usuarioActual = 'MADELEINE';
+                tabActual = 'COMUN';
+                iniciarSesionExitosa('Madeleine (Aeterna)');
             } else {
                 document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        function iniciarSesionExitosa(nombre) {
+            document.getElementById('lock-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('user-welcome').innerText = `Sesión activa: ${nombre}`;
+            construirTabsUsuario();
+            inicializarSupabase();
+        }
+
+        function construirTabsUsuario() {
+            const container = document.getElementById('tabs-container');
+            container.innerHTML = `
+                <button onclick="cambiarTab('COMUN')" id="btn-comun" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-900 text-emerald-400 border-t border-x border-slate-800 cursor-pointer">
+                    <i class="fa-solid fa-house-chimney mr-1.5"></i> Gastos Comunes
+                </button>
+            `;
+            if (usuarioActual === 'JULIAN') {
+                container.innerHTML += `
+                    <button onclick="cambiarTab('JULIAN')" id="btn-julian" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                        <i class="fa-solid fa-user mr-1.5"></i> Julián
+                    </button>
+                `;
+            } else if (usuarioActual === 'MADELEINE') {
+                container.innerHTML += `
+                    <button onclick="cambiarTab('MADELEINE')" id="btn-madeleine" class="tab-btn px-5 py-2.5 font-semibold text-sm rounded-t-xl bg-slate-950 text-slate-400 hover:text-white cursor-pointer">
+                        <i class="fa-solid fa-gem mr-1.5"></i> Madeleine
+                    </button>
+                `;
             }
         }
 
@@ -230,6 +257,7 @@
             document.getElementById('main-app').classList.add('hidden');
             document.getElementById('lock-screen').classList.remove('hidden');
             document.getElementById('pin-input').value = '';
+            usuarioActual = null;
         }
 
         async function inicializarSupabase() {
@@ -256,14 +284,16 @@
             }
 
             datosPresupuesto = data || [];
-            poblarSelectCategorias();
+            poblarSelectCategoriasContextual();
             renderizarTabla();
         }
 
-        function poblarSelectCategorias() {
+        function poblarSelectCategoriasContextual() {
             const select = document.getElementById('mov-categoria');
             select.innerHTML = '';
-            datosPresupuesto.forEach(item => {
+            // Muestra solo lo Común y lo del usuario activo
+            const filtrados = datosPresupuesto.filter(i => i.propietario === 'COMUN' || i.propietario === usuarioActual);
+            filtrados.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.id;
                 opt.textContent = `[${item.propietario}] ${item.concepto}`;
@@ -291,8 +321,8 @@
 
             if (filtrados.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">No hay registros cargados para esta categoría.</td></tr>`;
-                document.getElementById('total-seccion').innerText = `Total: $0 COP`;
-                document.getElementById('progreso-texto').innerText = `Ejecutado: $0 de $0`;
+                document.getElementById('total-seccion').innerText = `Estimado: $0 COP`;
+                document.getElementById('progreso-texto').innerText = `Ejecutado: $0 de $0 (0%)`;
                 document.getElementById('barra-progreso').style.width = '0%';
                 return;
             }
@@ -367,13 +397,11 @@
             }
 
             if (id) {
-                // Actualizar
                 const { error } = await supabaseClient.from('presupuestos').update({
                     concepto, monto_estimado: monto, dia_limite: dia, prioridad
                 }).eq('id', id);
                 if (error) alert('Error: ' + error.message);
             } else {
-                // Crear nuevo
                 const { error } = await supabaseClient.from('presupuestos').insert([{
                     propietario: tabActual, concepto, monto_estimado: monto, monto_ejecutado: 0, tipo_fecha: 'FIXED', dia_limite: dia, prioridad
                 }]);
@@ -402,13 +430,11 @@
                 return;
             }
 
-            // Buscar ítem actual para actualizar su ejecutado
             const item = datosPresupuesto.find(i => i.id === categoriaId);
             if (!item) return;
 
             const nuevoEjecutado = tipo === 'EGRESO' ? Number(item.monto_ejecutado) + monto : Math.max(0, Number(item.monto_ejecutado) - monto);
 
-            // Actualizar en Supabase
             const { error } = await supabaseClient.from('presupuestos').update({
                 monto_ejecutado: nuevoEjecutado
             }).eq('id', categoriaId);
@@ -423,25 +449,87 @@
             }
         }
 
+        // MOTOR DE DISTRIBUCIÓN INTELIGENTE (Waterfall + Partición 50/50 posterior a lo común)
         async function registrarMonetizacion() {
-            const monto = document.getElementById('input-monto').value;
+            const montoTotalIngreso = Number(document.getElementById('input-monto').value);
             const fuente = document.getElementById('input-fuente').value;
 
-            if (!monto || monto <= 0) {
+            if (!montoTotalIngreso || montoTotalIngreso <= 0) {
                 alert('Por favor ingresa un monto válido.');
                 return;
             }
 
-            const { error } = await supabaseClient
+            // 1. Registrar el ingreso global en la tabla monetizaciones
+            const { error: errMon } = await supabaseClient
                 .from('monetizaciones')
-                .insert([{ fuente: fuente, monto_total: Number(monto) }]);
+                .insert([{ fuente: fuente, monto_total: montoTotalIngreso }]);
 
-            if (error) {
-                alert('Error al registrar: ' + error.message);
-            } else {
-                alert(`¡Monetización de $${Number(monto).toLocaleString()} registrada con éxito!`);
-                document.getElementById('input-monto').value = '';
+            if (errMon) {
+                alert('Error al registrar monetización: ' + errMon.message);
+                return;
             }
+
+            let dineroRestante = montoTotalIngreso;
+
+            // 2. FASE COMÚN: Cubrir Gastos Comunes por Prioridades (1, luego 2, luego 3)
+            let comunes = datosPresupuesto.filter(i => i.propietario === 'COMUN').sort((a,b) => a.prioridad - b.prioridad);
+            
+            for (let item of comunes) {
+                if (dineroRestante <= 0) break;
+                const estimado = Number(item.monto_estimado) || 0;
+                const ejecutado = Number(item.monto_ejecutado) || 0;
+                const faltante = Math.max(0, estimado - ejecutado);
+
+                if (faltante > 0) {
+                    const aporte = Math.min(dineroRestante, faltante);
+                    const nuevoEjecutado = ejecutado + aporte;
+                    dineroRestante -= aporte;
+
+                    await supabaseClient.from('presupuestos').update({ monto_ejecutado: nuevoEjecutado }).eq('id', item.id);
+                }
+            }
+
+            // 3. FASE REMANENTE: Lo que sobra se divide en partes iguales (50% Julián, 50% Madeleine)
+            let bolsaJulian = dineroRestante / 2;
+            let bolsaMadeleine = dineroRestante / 2;
+
+            // Distribuir la bolsa de Julián por prioridades en sus ítems personales
+            let itemsJulian = datosPresupuesto.filter(i => i.propietario === 'JULIAN').sort((a,b) => a.prioridad - b.prioridad);
+            for (let item of itemsJulian) {
+                if (bolsaJulian <= 0) break;
+                const estimado = Number(item.monto_estimado) || 0;
+                const ejecutado = Number(item.monto_ejecutado) || 0;
+                const faltante = Math.max(0, estimado - ejecutado);
+
+                if (faltante > 0) {
+                    const aporte = Math.min(bolsaJulian, faltante);
+                    const nuevoEjecutado = ejecutado + aporte;
+                    bolsaJulian -= aporte;
+
+                    await supabaseClient.from('presupuestos').update({ monto_ejecutado: nuevoEjecutado }).eq('id', item.id);
+                }
+            }
+
+            // Distribuir la bolsa de Madeleine por prioridades en sus ítems personales
+            let itemsMadeleine = datosPresupuesto.filter(i => i.propietario === 'MADELEINE').sort((a,b) => a.prioridad - b.prioridad);
+            for (let item of itemsMadeleine) {
+                if (bolsaMadeleine <= 0) break;
+                const estimado = Number(item.monto_estimado) || 0;
+                const ejecutado = Number(item.monto_ejecutado) || 0;
+                const faltante = Math.max(0, estimado - ejecutado);
+
+                if (faltante > 0) {
+                    const aporte = Math.min(bolsaMadeleine, faltante);
+                    const nuevoEjecutado = ejecutado + aporte;
+                    bolsaMadeleine -= aporte;
+
+                    await supabaseClient.from('presupuestos').update({ monto_ejecutado: nuevoEjecutado }).eq('id', item.id);
+                }
+            }
+
+            alert(`¡Monetización de $${montoTotalIngreso.toLocaleString()} distribuida con éxito!\n- Gastos comunes cubiertos primero.\n- Remanente partido 50/50 para los presupuestos personales.`);
+            document.getElementById('input-monto').value = '';
+            await cargarPresupuestos();
         }
     </script>
 </body>
